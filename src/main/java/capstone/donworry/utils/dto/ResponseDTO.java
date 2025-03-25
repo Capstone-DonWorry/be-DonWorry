@@ -1,12 +1,14 @@
 package capstone.donworry.utils.dto;
 
+import org.springframework.http.HttpStatus;
+
 public class ResponseDTO {
 
-    private int code;
+    private HttpStatus code;
 
     private String message;
 
-    public ResponseDTO(int code, String message) {
+    public ResponseDTO(HttpStatus code, String message) {
         this.code = code;
         this.message = message;
     }

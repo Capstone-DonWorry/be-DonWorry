@@ -8,9 +8,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    OK(200 , HttpStatus.OK, "OK");
+    OK(HttpStatus.OK, "OK");
 
-    private final int code;
     private final HttpStatus httpStatus;
     private final String message;
 
