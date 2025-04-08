@@ -1,4 +1,4 @@
-package capstone.donworry.utils.dto;
+package capstone.donworry.global.response;
 
 public class ResponseStatus {
     public static final String STATUS_SUCCESS = "Success";

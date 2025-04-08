@@ -1,4 +1,4 @@
-package capstone.donworry.utils.dto;
+package capstone.donworry.global.response;
 
 import org.springframework.http.HttpStatus;
 
