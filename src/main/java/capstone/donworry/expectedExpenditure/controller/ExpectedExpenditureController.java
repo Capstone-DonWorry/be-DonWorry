@@ -3,6 +3,7 @@ package capstone.donworry.expectedExpenditure.controller;
 import capstone.donworry.expectedExpenditure.domain.ExpectedExpenditure;
 import capstone.donworry.expectedExpenditure.dto.CreatedIdResponseDTO;
 import capstone.donworry.expectedExpenditure.dto.ExpectedExpenditureRequestDTO;
+import capstone.donworry.expectedExpenditure.dto.ExpectedExpenditureResponseDTO;
 import capstone.donworry.expectedExpenditure.service.ExpectedExpenditureService;
 import capstone.donworry.global.response.DataResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +19,13 @@ public class ExpectedExpenditureController {
     public final ExpectedExpenditureService expectedExpenditureService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<DataResponseDTO<ExpectedExpenditure>> getExpectedExpenditure(
+    public ResponseEntity<DataResponseDTO<ExpectedExpenditureResponseDTO>> getExpectedExpenditure(
             @PathVariable Long id) {
         ExpectedExpenditure expectedExpenditure = expectedExpenditureService.getExpectedExpenditure(id);
+        ExpectedExpenditureResponseDTO expectedExpenditureResponseDTO = ExpectedExpenditureResponseDTO.from(expectedExpenditure);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(DataResponseDTO.success(expectedExpenditure));
+                .body(DataResponseDTO.success(expectedExpenditureResponseDTO));
     }
 
     @PostMapping
@@ -36,15 +39,17 @@ public class ExpectedExpenditureController {
                 .body(DataResponseDTO.success(new CreatedIdResponseDTO(savedId)));
     }
 
-    @PutMapping("/{id}/edit")
-    public ResponseEntity<DataResponseDTO<ExpectedExpenditure>> editExpectedExpenditure(
+    @PutMapping("/{id}")
+    public ResponseEntity<DataResponseDTO<ExpectedExpenditureResponseDTO>>  editExpectedExpenditure(
             @PathVariable Long id,
             @RequestBody ExpectedExpenditureRequestDTO expectedExpenditureRequestDTO) {
 
         ExpectedExpenditure updatedExpectedExpenditure = expectedExpenditureService.
                 updateExpectedExpenditure(id, expectedExpenditureRequestDTO);
 
+        ExpectedExpenditureResponseDTO expectedExpenditureResponseDTO = ExpectedExpenditureResponseDTO.from(updatedExpectedExpenditure);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(DataResponseDTO.success(updatedExpectedExpenditure));
+                .body(DataResponseDTO.success(expectedExpenditureResponseDTO));
     }
 }

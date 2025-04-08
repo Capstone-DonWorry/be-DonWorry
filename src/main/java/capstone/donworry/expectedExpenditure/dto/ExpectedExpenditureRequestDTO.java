@@ -2,8 +2,6 @@ package capstone.donworry.expectedExpenditure.dto;
 
 import capstone.donworry.expectedExpenditure.domain.ExpectedExpenditure;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
 @Getter
