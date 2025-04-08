@@ -8,12 +8,16 @@ public class DataResponseDTO<T> extends ResponseDTO {
     private final T data;
 
     private DataResponseDTO(T data) {
-        super(ErrorCode.OK.getHttpStatus(), ErrorCode.OK.getMessage());
+        super(ErrorCode.OK.getStatus(),
+                ErrorCode.OK.getHttpStatus(),
+                ErrorCode.OK.getMessage());
         this.data = data;
     }
 
     private DataResponseDTO(String message, T data) {
-        super(ErrorCode.OK.getHttpStatus(), message);
+        super(ErrorCode.OK.getStatus(),
+                ErrorCode.OK.getHttpStatus(),
+                message);
         this.data = data;
     }
 
