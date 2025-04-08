@@ -21,6 +21,7 @@ public class ExpectedExpenditureController {
     @GetMapping("/{id}")
     public ResponseEntity<DataResponseDTO<ExpectedExpenditureResponseDTO>> getExpectedExpenditure(
             @PathVariable Long id) {
+
         ExpectedExpenditure expectedExpenditure = expectedExpenditureService.getExpectedExpenditure(id);
         ExpectedExpenditureResponseDTO expectedExpenditureResponseDTO = ExpectedExpenditureResponseDTO.from(expectedExpenditure);
 
@@ -40,16 +41,27 @@ public class ExpectedExpenditureController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DataResponseDTO<ExpectedExpenditureResponseDTO>>  editExpectedExpenditure(
+    public ResponseEntity<DataResponseDTO<ExpectedExpenditureResponseDTO>> editExpectedExpenditure(
             @PathVariable Long id,
             @RequestBody ExpectedExpenditureRequestDTO expectedExpenditureRequestDTO) {
 
         ExpectedExpenditure updatedExpectedExpenditure = expectedExpenditureService.
                 updateExpectedExpenditure(id, expectedExpenditureRequestDTO);
-
         ExpectedExpenditureResponseDTO expectedExpenditureResponseDTO = ExpectedExpenditureResponseDTO.from(updatedExpectedExpenditure);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(DataResponseDTO.success(expectedExpenditureResponseDTO));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<DataResponseDTO<Void>> deleteExpectedExpenditure(
+            @PathVariable Long id
+    ) {
+
+        expectedExpenditureService.deleteExpectedExpenditure(id);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(DataResponseDTO.success(null));
+    }
+
 }

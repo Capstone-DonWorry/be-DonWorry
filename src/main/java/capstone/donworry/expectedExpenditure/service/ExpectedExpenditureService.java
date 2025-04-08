@@ -22,6 +22,7 @@ public class ExpectedExpenditureService {
     }
 
     public Long saveExpectedExpenditure(ExpectedExpenditure expectedExpenditure) {
+
         ExpectedExpenditure savedExpectedExpenditure = expectedExpenditureRepository.save(expectedExpenditure);
 
         return savedExpectedExpenditure.getId();
@@ -38,5 +39,9 @@ public class ExpectedExpenditureService {
                 expectedExpenditureRequestDTO.getDate());
 
         return savedExpectedExpenditure;
+    }
+
+    public void deleteExpectedExpenditure(Long id) {
+        expectedExpenditureRepository.deleteById(id);
     }
 }
