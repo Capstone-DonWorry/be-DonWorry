@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    //예외 처리
+
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<ErrorResponseDTO> handlerEntityNotFoundException(EntityNotFoundException e) {
         log.error(e.toString(), e);

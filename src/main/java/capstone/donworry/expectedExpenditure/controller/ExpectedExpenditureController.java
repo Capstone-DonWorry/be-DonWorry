@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/expectedExpenditure")
 @RequiredArgsConstructor
@@ -27,7 +25,7 @@ public class ExpectedExpenditureController {
                 .body(DataResponseDTO.success(expectedExpenditure));
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<DataResponseDTO<CreatedIdResponseDTO>> createExpectedExpenditure(
             @RequestBody ExpectedExpenditureRequestDTO expectedExpenditureRequestDTO) {
 
@@ -36,5 +34,17 @@ public class ExpectedExpenditureController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(DataResponseDTO.success(new CreatedIdResponseDTO(savedId)));
+    }
+
+    @PutMapping("/{id}/edit")
+    public ResponseEntity<DataResponseDTO<ExpectedExpenditure>> editExpectedExpenditure(
+            @PathVariable Long id,
+            @RequestBody ExpectedExpenditureRequestDTO expectedExpenditureRequestDTO) {
+
+        ExpectedExpenditure updatedExpectedExpenditure = expectedExpenditureService.
+                updateExpectedExpenditure(id, expectedExpenditureRequestDTO);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(DataResponseDTO.success(updatedExpectedExpenditure));
     }
 }

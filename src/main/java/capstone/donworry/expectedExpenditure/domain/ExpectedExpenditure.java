@@ -30,4 +30,9 @@ public class ExpectedExpenditure {
         this.date = date;
     }
 
+    public void update(String details, Long amount, LocalDate date) {
+        this.details = details;
+        this.amount = amount;
+        this.date = date;
+    }
 }
