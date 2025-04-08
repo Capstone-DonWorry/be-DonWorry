@@ -18,4 +18,10 @@ public class ExpectedExpenditureService {
         return expectedExpenditureRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("해당 ID의 데이터를 찾을 수 없습니다."));
     }
+
+    public Long saveExpectedExpenditure(ExpectedExpenditure expectedExpenditure) {
+        ExpectedExpenditure savedExpectedExpenditure = expectedExpenditureRepository.save(expectedExpenditure);
+
+        return savedExpectedExpenditure.getId();
+    }
 }

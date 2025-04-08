@@ -1,15 +1,14 @@
 package capstone.donworry.expectedExpenditure.controller;
 
 import capstone.donworry.expectedExpenditure.domain.ExpectedExpenditure;
+import capstone.donworry.expectedExpenditure.dto.CreatedIdResponseDTO;
+import capstone.donworry.expectedExpenditure.dto.ExpectedExpenditureRequestDTO;
 import capstone.donworry.expectedExpenditure.service.ExpectedExpenditureService;
 import capstone.donworry.global.response.DataResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -28,5 +27,14 @@ public class ExpectedExpenditureController {
                 .body(DataResponseDTO.success(expectedExpenditure));
     }
 
+    @PostMapping()
+    public ResponseEntity<DataResponseDTO<CreatedIdResponseDTO>> createExpectedExpenditure(
+            @RequestBody ExpectedExpenditureRequestDTO expectedExpenditureRequestDTO) {
 
+        ExpectedExpenditure expectedExpenditure = expectedExpenditureRequestDTO.toEntity();
+        Long savedId = expectedExpenditureService.saveExpectedExpenditure(expectedExpenditure);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(DataResponseDTO.success(new CreatedIdResponseDTO(savedId)));
+    }
 }
