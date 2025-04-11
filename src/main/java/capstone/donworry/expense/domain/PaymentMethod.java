@@ -1,4 +1,4 @@
-package capstone.donworry.domain;
+package capstone.donworry.expense.domain;
 
 public enum PaymentMethod {
         CASH,

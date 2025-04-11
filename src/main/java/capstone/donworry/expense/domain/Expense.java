@@ -1,4 +1,4 @@
-package capstone.donworry.domain;
+package capstone.donworry.expense.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

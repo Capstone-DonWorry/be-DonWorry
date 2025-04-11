@@ -1,8 +1,8 @@
-package capstone.donworry.dto;
+package capstone.donworry.expense.dto;
 
-import capstone.donworry.domain.Expense;
-import capstone.donworry.domain.ExpenseCategory;
-import capstone.donworry.domain.PaymentMethod;
+import capstone.donworry.expense.domain.Expense;
+import capstone.donworry.expense.domain.ExpenseCategory;
+import capstone.donworry.expense.domain.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
