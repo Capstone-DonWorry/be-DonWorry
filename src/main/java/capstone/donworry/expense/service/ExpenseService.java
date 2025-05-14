@@ -1,7 +1,6 @@
 package capstone.donworry.expense.service;
 
 import capstone.donworry.expense.dto.ExpenseRequestDTO;
-import capstone.donworry.expense.dto.UpdateExpenseRequest;
 import capstone.donworry.expense.domain.Expense;
 import capstone.donworry.expense.repository.ExpenseRepository;
 import jakarta.persistence.EntityNotFoundException;

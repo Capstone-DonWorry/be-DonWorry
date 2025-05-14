@@ -3,17 +3,14 @@ package capstone.donworry.expense.controller;
 import capstone.donworry.expectedExpenditure.dto.CreatedIdResponseDTO;
 import capstone.donworry.expense.dto.ExpenseRequestDTO;
 import capstone.donworry.expense.dto.ExpenseResponseDTO;
-import capstone.donworry.expense.dto.UpdateExpenseRequest;
 import capstone.donworry.expense.domain.Expense;
 import capstone.donworry.expense.service.ExpenseService;
 import capstone.donworry.global.response.DataResponseDTO;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,13 +23,13 @@ public class ExpenseController {
 
 
     @GetMapping
-    public ResponseEntity<DataResponseDTO<ExpenseResponseDTO>> getAllExpenses(){
+    public ResponseEntity<DataResponseDTO<List<ExpenseResponseDTO>>> getAllExpenses(){
         List<Expense> expenses = expenseService.getAllExpenses();
         List<ExpenseResponseDTO> expenseResponseDTOList = expenses.stream()
                 .map(ExpenseResponseDTO::from)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(DataResponseDTO.success(expenseResponseDTOList);
+        return ResponseEntity.ok(DataResponseDTO.success(expenseResponseDTOList));
     }
 
     @GetMapping("/{id}")
