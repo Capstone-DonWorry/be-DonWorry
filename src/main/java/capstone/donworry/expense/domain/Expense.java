@@ -1,5 +1,6 @@
 package capstone.donworry.expense.domain;
 
+import capstone.donworry.oauth.kakao.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -35,26 +36,31 @@ public class Expense {
     @Column(name = "payment", nullable = false)
     private PaymentMethod payment;
 
-//    @ManyToOne(fetch = FetchType.LAZY)  // 사용자:지출=n:1
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+    @Column(name = "note")
+    private String note;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @Builder
-    public Expense(String title, Long amount, LocalDate expenseDate, ExpenseCategory category, PaymentMethod payment) {
+    public Expense(String title, Long amount, LocalDate expenseDate, ExpenseCategory category, PaymentMethod payment, String note, Member member) {
         this.title = title;
         this.amount = amount;
         this.expenseDate = expenseDate;
         this.category = category;
         this.payment = payment;
-//        this.user = user;
+        this.note = note;
+        this.member = member;
     }
 
-    public void update(String title, Long amount, LocalDate expenseDate, ExpenseCategory category, PaymentMethod payment) {
+    public void update(String title, Long amount, LocalDate expenseDate, ExpenseCategory category, PaymentMethod payment, String note, Member member) {
         this.title = title;
         this.amount = amount;
         this.expenseDate = expenseDate;
         this.category = category;
         this.payment = payment;
-//        this.user = user;
+        this.note = note;
+        this.member = member;
     }
 }
