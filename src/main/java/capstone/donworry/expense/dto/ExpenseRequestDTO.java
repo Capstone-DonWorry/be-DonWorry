@@ -3,6 +3,7 @@ package capstone.donworry.expense.dto;
 import capstone.donworry.expense.domain.Expense;
 import capstone.donworry.expense.domain.ExpenseCategory;
 import capstone.donworry.expense.domain.PaymentMethod;
+import capstone.donworry.oauth.kakao.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,17 +19,19 @@ public class ExpenseRequestDTO {
     private LocalDate expenseDate;
     private ExpenseCategory category;
     private PaymentMethod payment;
-//    private User user;
+    private String note;
+    private Long memberId;
 
 
-    public Expense toEntity() {
+    public Expense toEntity(Member member) {
         return Expense.builder()
                 .title(title)
                 .amount(amount)
                 .expenseDate(expenseDate)
                 .category(category)
                 .payment(payment)
-//                .user(user)
+                .note(note)
+                .member(member)
                 .build();
     }
 }

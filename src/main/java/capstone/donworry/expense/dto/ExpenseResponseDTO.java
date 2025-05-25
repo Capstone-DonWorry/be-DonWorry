@@ -3,6 +3,7 @@ package capstone.donworry.expense.dto;
 import capstone.donworry.expense.domain.Expense;
 import capstone.donworry.expense.domain.ExpenseCategory;
 import capstone.donworry.expense.domain.PaymentMethod;
+import capstone.donworry.oauth.kakao.domain.Member;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -15,14 +16,19 @@ public class ExpenseResponseDTO {
     private LocalDate expenseDate;
     private ExpenseCategory category;
     private PaymentMethod payment;
+    private String note;
+    private Member member;
+
 
     private ExpenseResponseDTO(String title, Long amount, LocalDate expenseDate,
-                               ExpenseCategory category, PaymentMethod payment) {
+                               ExpenseCategory category, PaymentMethod payment, String note, Member member) {
         this.title = title;
         this.amount = amount;
         this.expenseDate = expenseDate;
         this.category = category;
         this.payment = payment;
+        this.note = note;
+        this.member = member;
     }
 
     public static ExpenseResponseDTO from(Expense expense) {
@@ -31,7 +37,9 @@ public class ExpenseResponseDTO {
                 expense.getAmount(),
                 expense.getExpenseDate(),
                 expense.getCategory(),
-                expense.getPayment()
+                expense.getPayment(),
+                expense.getNote(),
+                expense.getMember()
         );
     }
 }
