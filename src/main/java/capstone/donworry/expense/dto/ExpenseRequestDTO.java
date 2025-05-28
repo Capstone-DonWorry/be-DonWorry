@@ -3,7 +3,7 @@ package capstone.donworry.expense.dto;
 import capstone.donworry.expense.domain.Expense;
 import capstone.donworry.expense.domain.ExpenseCategory;
 import capstone.donworry.expense.domain.PaymentMethod;
-import capstone.donworry.oauth.kakao.domain.Member;
+import capstone.donworry.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

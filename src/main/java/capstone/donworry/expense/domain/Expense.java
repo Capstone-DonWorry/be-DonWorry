@@ -1,6 +1,7 @@
 package capstone.donworry.expense.domain;
 
-import capstone.donworry.oauth.kakao.domain.Member;
+
+import capstone.donworry.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

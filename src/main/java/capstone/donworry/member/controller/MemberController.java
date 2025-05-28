@@ -1,7 +1,7 @@
 package capstone.donworry.member.controller;
 
 import capstone.donworry.global.response.DataResponseDTO;
-import capstone.donworry.login.jwt.CustomUserDetails;
+import capstone.donworry.login.common.CustomUserDetails;
 import capstone.donworry.member.domain.Member;
 import capstone.donworry.member.dto.MemberJoinRequestDTO;
 import capstone.donworry.member.dto.MemberResponseDTO;

@@ -6,8 +6,8 @@ import capstone.donworry.expense.dto.ExpenseResponseDTO;
 import capstone.donworry.expense.domain.Expense;
 import capstone.donworry.expense.service.ExpenseService;
 import capstone.donworry.global.response.DataResponseDTO;
-import capstone.donworry.oauth.kakao.repository.MemberRepository;
-import capstone.donworry.oauth.kakao.security.CustomUserDetails;
+import capstone.donworry.login.common.CustomUserDetails;
+import capstone.donworry.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +41,7 @@ public class ExpenseController {
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails){
 
-        Long memberId = userDetails.getMemberId();
+        Long memberId = userDetails.getMember().getId();
         Expense expense = expenseService.getExpenseById(id, memberId);
         ExpenseResponseDTO expenseResponseDTO = ExpenseResponseDTO.from(expense);
 
@@ -55,7 +55,7 @@ public class ExpenseController {
             @RequestBody ExpenseRequestDTO expenseRequestDTO,
             @AuthenticationPrincipal CustomUserDetails userDetails){
 
-        Long memberId = userDetails.getMemberId();
+        Long memberId = userDetails.getMember().getId();
         Long savedId = expenseService.addExpense(expenseRequestDTO, memberId);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -68,7 +68,7 @@ public class ExpenseController {
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails){
 
-        Long memberId = userDetails.getMemberId();
+        Long memberId = userDetails.getMember().getId();
         expenseService.deleteExpense(id, memberId);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -82,7 +82,7 @@ public class ExpenseController {
             @RequestBody ExpenseRequestDTO expenseRequestDTO,
             @AuthenticationPrincipal CustomUserDetails userDetails){
 
-        Long memberId = userDetails.getMemberId();
+        Long memberId = userDetails.getMember().getId();
         Expense updateExpense = expenseService.updateExpense(id, memberId, expenseRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK)
