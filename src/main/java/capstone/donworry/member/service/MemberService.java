@@ -1,6 +1,4 @@
 package capstone.donworry.member.service;
-
-
 import capstone.donworry.login.common.LoginRequestDTO;
 import capstone.donworry.member.domain.Member;
 import capstone.donworry.member.dto.MemberJoinRequestDTO;
@@ -38,6 +36,7 @@ public class MemberService {
 
     @Transactional
     public Member login(LoginRequestDTO loginRequest) {
+  
         Member findMember = memberRepository.findByLoginId(loginRequest.getLoginId());
 
         if (findMember == null || !bCryptPasswordEncoder.matches(loginRequest.getPassword(), findMember.getPassword())) {
