@@ -30,9 +30,15 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+//                .headers(headers -> headers
+//                        .frameOptions(frameOptions -> frameOptions
+//                                .sameOrigin() // h2-console이 iframe에서 뜨게 해줌
+//                        )
+//                )
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/api/member/signup", "/api/jwt/login", "/api/oauth/login").permitAll()
+                                .requestMatchers("/api/member/signup", "/api/jwt/login", "/api/oauth/login", "/h2-console/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 

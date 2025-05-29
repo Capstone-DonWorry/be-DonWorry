@@ -36,7 +36,7 @@ public class ExpenseController {
         return ResponseEntity.ok(DataResponseDTO.success(expenseResponseDTOList));
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<DataResponseDTO<ExpenseResponseDTO>> getExpenseById(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails){
@@ -77,16 +77,17 @@ public class ExpenseController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<DataResponseDTO<Expense>> updateExpense(
+    public ResponseEntity<DataResponseDTO<ExpenseResponseDTO>> updateExpense(
             @PathVariable Long id,
             @RequestBody ExpenseRequestDTO expenseRequestDTO,
             @AuthenticationPrincipal CustomUserDetails userDetails){
 
         Long memberId = userDetails.getMember().getId();
         Expense updateExpense = expenseService.updateExpense(id, memberId, expenseRequestDTO);
+        ExpenseResponseDTO expenseResponseDTO = ExpenseResponseDTO.from(updateExpense);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(DataResponseDTO.success(updateExpense));
+                .body(DataResponseDTO.success(expenseResponseDTO));
     }
 }
 

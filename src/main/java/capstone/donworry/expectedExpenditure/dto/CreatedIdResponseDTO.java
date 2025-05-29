@@ -1,5 +1,9 @@
 package capstone.donworry.expectedExpenditure.dto;
 
+import lombok.*;
+
+@Data
+@NoArgsConstructor
 public class CreatedIdResponseDTO {
     private Long id;
 
