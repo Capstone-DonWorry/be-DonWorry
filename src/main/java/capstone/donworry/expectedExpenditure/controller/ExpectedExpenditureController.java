@@ -23,9 +23,11 @@ public class ExpectedExpenditureController {
 
     @GetMapping("/{id}")
     public ResponseEntity<DataResponseDTO<ExpectedExpenditureResponseDTO>> getExpectedExpenditure(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        ExpectedExpenditure expectedExpenditure = expectedExpenditureService.getExpectedExpenditure(id);
+        Long memberId = userDetails.getMember().getId();
+        ExpectedExpenditure expectedExpenditure = expectedExpenditureService.getExpectedExpenditure(id, memberId);
         ExpectedExpenditureResponseDTO expectedExpenditureResponseDTO = ExpectedExpenditureResponseDTO.from(expectedExpenditure);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -47,10 +49,12 @@ public class ExpectedExpenditureController {
     @PutMapping("/{id}")
     public ResponseEntity<DataResponseDTO<ExpectedExpenditureResponseDTO>> editExpectedExpenditure(
             @PathVariable Long id,
-            @RequestBody ExpectedExpenditureRequestDTO expectedExpenditureRequestDTO) {
+            @RequestBody ExpectedExpenditureRequestDTO expectedExpenditureRequestDTO,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
+        Long memberId = userDetails.getMember().getId();
         ExpectedExpenditure updatedExpectedExpenditure = expectedExpenditureService.
-                updateExpectedExpenditure(id, expectedExpenditureRequestDTO);
+                updateExpectedExpenditure(id, memberId, expectedExpenditureRequestDTO);
         ExpectedExpenditureResponseDTO expectedExpenditureResponseDTO = ExpectedExpenditureResponseDTO.from(updatedExpectedExpenditure);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -59,9 +63,11 @@ public class ExpectedExpenditureController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<DataResponseDTO<Void>> deleteExpectedExpenditure(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        expectedExpenditureService.deleteExpectedExpenditure(id);
+        Long memberId = userDetails.getMember().getId();
+        expectedExpenditureService.deleteExpectedExpenditure(memberId, id);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(DataResponseDTO.success(null));

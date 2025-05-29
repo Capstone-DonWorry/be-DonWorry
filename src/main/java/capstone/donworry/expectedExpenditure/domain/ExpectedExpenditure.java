@@ -14,7 +14,8 @@ public class ExpectedExpenditure {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "expectedExpenditureId", updatable = false)
+    private Long expectedExpenditureId;
 
     private String details;
 

@@ -21,6 +21,7 @@ public class CalendarController {
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         Long memberId = userDetails.getMember().getId();
-    }
 
+        return null;
+    }
 }
