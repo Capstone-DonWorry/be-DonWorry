@@ -27,6 +27,7 @@ public class ExpenseService {
         return expenseRepository.findByExpenseIdAndMemberId(id, memberId).
                 orElseThrow(() -> new EntityNotFoundException("해당 ID의 데이터를 찾을 수 없습니다."));
     }
+
     public Long addExpense(ExpenseRequestDTO expenseRequestDTO, Long memberId){
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));

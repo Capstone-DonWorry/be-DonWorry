@@ -6,9 +6,12 @@ import capstone.donworry.expectedExpenditure.dto.ExpectedExpenditureRequestDTO;
 import capstone.donworry.expectedExpenditure.dto.ExpectedExpenditureResponseDTO;
 import capstone.donworry.expectedExpenditure.service.ExpectedExpenditureService;
 import capstone.donworry.global.response.DataResponseDTO;
+import capstone.donworry.login.common.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,9 +23,11 @@ public class ExpectedExpenditureController {
 
     @GetMapping("/{id}")
     public ResponseEntity<DataResponseDTO<ExpectedExpenditureResponseDTO>> getExpectedExpenditure(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        ExpectedExpenditure expectedExpenditure = expectedExpenditureService.getExpectedExpenditure(id);
+        Long memberId = userDetails.getMember().getId();
+        ExpectedExpenditure expectedExpenditure = expectedExpenditureService.getExpectedExpenditure(id, memberId);
         ExpectedExpenditureResponseDTO expectedExpenditureResponseDTO = ExpectedExpenditureResponseDTO.from(expectedExpenditure);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -31,10 +36,11 @@ public class ExpectedExpenditureController {
 
     @PostMapping
     public ResponseEntity<DataResponseDTO<CreatedIdResponseDTO>> createExpectedExpenditure(
-            @RequestBody ExpectedExpenditureRequestDTO expectedExpenditureRequestDTO) {
+            @RequestBody ExpectedExpenditureRequestDTO expectedExpenditureRequestDTO,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        ExpectedExpenditure expectedExpenditure = expectedExpenditureRequestDTO.toEntity();
-        Long savedId = expectedExpenditureService.saveExpectedExpenditure(expectedExpenditure);
+        Long memberId = userDetails.getMember().getId();
+        Long savedId = expectedExpenditureService.saveExpectedExpenditure(memberId, expectedExpenditureRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(DataResponseDTO.success(new CreatedIdResponseDTO(savedId)));
@@ -43,10 +49,12 @@ public class ExpectedExpenditureController {
     @PutMapping("/{id}")
     public ResponseEntity<DataResponseDTO<ExpectedExpenditureResponseDTO>> editExpectedExpenditure(
             @PathVariable Long id,
-            @RequestBody ExpectedExpenditureRequestDTO expectedExpenditureRequestDTO) {
+            @RequestBody ExpectedExpenditureRequestDTO expectedExpenditureRequestDTO,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
+        Long memberId = userDetails.getMember().getId();
         ExpectedExpenditure updatedExpectedExpenditure = expectedExpenditureService.
-                updateExpectedExpenditure(id, expectedExpenditureRequestDTO);
+                updateExpectedExpenditure(id, memberId, expectedExpenditureRequestDTO);
         ExpectedExpenditureResponseDTO expectedExpenditureResponseDTO = ExpectedExpenditureResponseDTO.from(updatedExpectedExpenditure);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -55,13 +63,13 @@ public class ExpectedExpenditureController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<DataResponseDTO<Void>> deleteExpectedExpenditure(
-            @PathVariable Long id
-    ) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        expectedExpenditureService.deleteExpectedExpenditure(id);
+        Long memberId = userDetails.getMember().getId();
+        expectedExpenditureService.deleteExpectedExpenditure(memberId, id);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(DataResponseDTO.success(null));
     }
-
 }

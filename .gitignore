@@ -37,3 +37,5 @@ application.properties
 ### VS Code ###
 .vscode/
 
+### resources 막아두기
+src/main/resources/*

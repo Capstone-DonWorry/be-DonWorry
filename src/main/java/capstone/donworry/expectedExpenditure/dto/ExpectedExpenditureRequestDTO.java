@@ -1,6 +1,7 @@
 package capstone.donworry.expectedExpenditure.dto;
 
 import capstone.donworry.expectedExpenditure.domain.ExpectedExpenditure;
+import capstone.donworry.member.domain.Member;
 import lombok.Getter;
 import java.time.LocalDate;
 
@@ -12,7 +13,7 @@ public class ExpectedExpenditureRequestDTO {
 
     private LocalDate date;
 
-    public ExpectedExpenditure toEntity() {
-        return new ExpectedExpenditure(details, amount, date);
+    public ExpectedExpenditure toEntity(Member member) {
+        return new ExpectedExpenditure(details, amount, date, member);
     }
 }
