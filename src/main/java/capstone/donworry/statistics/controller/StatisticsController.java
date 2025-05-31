@@ -37,14 +37,7 @@ public class StatisticsController {
         LocalDate endDate = startDate.with(TemporalAdjusters.lastDayOfMonth());
 
 
-        if (userDetails == null) {
-            // 인증 실패 상태임
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
         Long memberId = userDetails.getMember().getId();
-        System.out.println("memberId = " + memberId);
-
         List<WeeklyExpenseDTO> result = statisticsService.getWeeklyExpense(memberId, startDate, endDate);
 
         return ResponseEntity.ok(DataResponseDTO.success(result));
