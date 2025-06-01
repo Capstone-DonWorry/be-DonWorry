@@ -57,13 +57,13 @@ public class StatisticsService {
             throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
         }
 
-        // 일별 소비
+
         List<Object[]> dailyResult = expenseStatisticsRepository.findDailyExpense(memberId, startDate, endDate);
         List<DailyExpenseDTO> dailyExpenses = dailyResult.stream()
                 .map(row -> new DailyExpenseDTO((LocalDate) row[0], (Long) row[1]))
                 .collect(Collectors.toList());
 
-        // 결제수단별 소비
+
         List<Object[]> paymentResult = expenseStatisticsRepository.findExpenseByPaymentMethod(memberId, startDate, endDate);
         List<PaymentExpenseDTO> paymentExpenses = paymentResult.stream()
                 .map(row -> new PaymentExpenseDTO((PaymentMethod) row[0], (Long) row[1]))
@@ -101,24 +101,24 @@ public class StatisticsService {
             throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
         }
 
-        // 1. 지출 목록
+
         List<Object[]> expenseRows = expenseStatisticsRepository.findExpensesByCategory(memberId, category, startDate, endDate);
         List<ExpenseItemDTO> expenses = expenseRows.stream()
                 .map(row -> new ExpenseItemDTO(
-                        (Long) row[0],           // id
-                        (String) row[1],         // title
-                        (Long) row[2],           // amount
-                        (PaymentMethod) row[3],  // payment method
-                        (LocalDate) row[4]       // date
+                        (Long) row[0],
+                        (String) row[1],
+                        (Long) row[2],
+                        (PaymentMethod) row[3],
+                        (LocalDate) row[4]
                 ))
                 .collect(Collectors.toList());
 
-        // 2. 결제수단별 총액
+
         List<Object[]> paymentRows = expenseStatisticsRepository.findPaymentSummaryByCategory(memberId, category, startDate, endDate);
         List<PaymentExpenseDTO> paymentExpenses = paymentRows.stream()
                 .map(row -> new PaymentExpenseDTO(
-                        (PaymentMethod) row[0],         // payment method
-                        (Long) row[1]            // total amount
+                        (PaymentMethod) row[0],
+                        (Long) row[1]
                 ))
                 .collect(Collectors.toList());
 
