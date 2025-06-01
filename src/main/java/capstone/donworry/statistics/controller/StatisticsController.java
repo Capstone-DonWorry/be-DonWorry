@@ -1,11 +1,10 @@
 package capstone.donworry.statistics.controller;
 
+import capstone.donworry.expense.domain.ExpenseCategory;
 import capstone.donworry.global.response.DataResponseDTO;
 import capstone.donworry.login.common.CustomUserDetails;
-import capstone.donworry.statistics.dto.DailyExpenseDTO;
-import capstone.donworry.statistics.dto.PaymentExpenseDTO;
+import capstone.donworry.statistics.dto.*;
 import capstone.donworry.statistics.service.StatisticsService;
-import capstone.donworry.statistics.dto.WeeklyExpenseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -43,28 +43,57 @@ public class StatisticsController {
         return ResponseEntity.ok(DataResponseDTO.success(result));
     }
 
-    @GetMapping("/daily")
-    public ResponseEntity<DataResponseDTO<List<DailyExpenseDTO>>> getDailyExpenseByWeek(
+    @GetMapping("/weekly/detail")
+    public ResponseEntity<DataResponseDTO<WeeklyDetailExpenseDTO>> getWeeklyDetailStatistics(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
         Long memberId = userDetails.getMember().getId();
-        List<DailyExpenseDTO> dailyStats = statisticsService.getDailyExpense(memberId, startDate, endDate);
+        WeeklyDetailExpenseDTO dto = statisticsService.getWeeklyDetailStatistics(memberId, startDate, endDate);
 
-        return ResponseEntity.ok(DataResponseDTO.success(dailyStats));
+        return ResponseEntity.ok(DataResponseDTO.success(dto));
     }
 
 
-    @GetMapping("/weekly/payment-method")
-    public ResponseEntity<DataResponseDTO<List<PaymentExpenseDTO>>> getWeeklyPaymentStats(
+    @GetMapping("/monthly/category")
+    public ResponseEntity<DataResponseDTO<MonthlyStatisticsDTO>> getMonthlyStatistics(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @RequestParam int year,
+            @RequestParam int month) {
 
         Long memberId = userDetails.getMember().getId();
-        List<PaymentExpenseDTO> paymentStats = statisticsService.getWeeklyPaymentExpense(memberId, startDate, endDate);
-        return ResponseEntity.ok(DataResponseDTO.success(paymentStats));
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.with(TemporalAdjusters.lastDayOfMonth());
+
+        MonthlyStatisticsDTO dto = statisticsService.getMonthlyStatistics(memberId, startDate, endDate);
+
+        return ResponseEntity.ok(DataResponseDTO.success(dto));
     }
+
+    @GetMapping("/monthly/category/detail")
+    public ResponseEntity<DataResponseDTO<CategoryExpenseDetailDTO>> getCategoryDetail(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam int year,
+            @RequestParam int month,
+            @RequestParam String category) {
+
+        Long memberId = userDetails.getMember().getId();
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.with(TemporalAdjusters.lastDayOfMonth());
+
+        ExpenseCategory categoryEnum;
+        try {
+            categoryEnum = ExpenseCategory.valueOf(category.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 카테고리입니다.");
+        }
+
+        CategoryExpenseDetailDTO dto = statisticsService.getCategoryExpenseDetail(memberId, categoryEnum, startDate, endDate);
+        return ResponseEntity.ok(DataResponseDTO.success(dto));
+    }
+
+
+
 }
 
