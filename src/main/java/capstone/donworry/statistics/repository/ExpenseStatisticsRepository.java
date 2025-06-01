@@ -1,6 +1,7 @@
 package capstone.donworry.statistics.repository;
 
 import capstone.donworry.expense.domain.Expense;
+import capstone.donworry.expense.domain.ExpenseCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -35,9 +36,48 @@ public interface ExpenseStatisticsRepository extends JpaRepository<Expense, Long
             "WHERE e.member.id = :memberId " +
             "AND e.expenseDate BETWEEN :startDate AND :endDate " +
             "GROUP BY e.payment")
-    List<Object[]> findWeeklyExpenseByPaymentMethod(@Param("memberId") Long memberId,
+    List<Object[]> findExpenseByPaymentMethod(@Param("memberId") Long memberId,
                                                     @Param("startDate") LocalDate startDate,
                                                     @Param("endDate") LocalDate endDate);
+
+
+    @Query("SELECT e.category, SUM(e.amount) " +
+            "FROM Expense e " +
+            "WHERE e.member.id = :memberId AND e.expenseDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY e.category")
+    List<Object[]> findMonthlyCategoryExpense(@Param("memberId") Long memberId,
+                                              @Param("startDate") LocalDate startDate,
+                                              @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT SUM(e.amount) " +
+            "FROM Expense e " +
+            "WHERE e.member.id = :memberId " +
+            "AND e.expenseDate BETWEEN :startDate AND :endDate")
+    Long findMonthlyTotalExpense(@Param("memberId") Long memberId,
+                                 @Param("startDate") LocalDate startDate,
+                                 @Param("endDate") LocalDate endDate);
+
+
+
+    @Query("""
+    SELECT e.expenseId, e.title, e.amount, e.payment, e.expenseDate
+    FROM Expense e
+    WHERE e.member.id = :memberId
+      AND e.category = :category
+      AND e.expenseDate BETWEEN :startDate AND :endDate
+    ORDER BY e.expenseDate DESC
+""")
+    List<Object[]> findExpensesByCategory(Long memberId, ExpenseCategory category, LocalDate startDate, LocalDate endDate);
+
+    @Query("""
+    SELECT e.payment, SUM(e.amount)
+    FROM Expense e
+    WHERE e.member.id = :memberId
+      AND e.category = :category
+      AND e.expenseDate BETWEEN :startDate AND :endDate
+    GROUP BY e.payment
+""")
+    List<Object[]> findPaymentSummaryByCategory(Long memberId, ExpenseCategory category, LocalDate startDate, LocalDate endDate);
 
 }
 

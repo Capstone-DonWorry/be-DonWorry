@@ -1,11 +1,11 @@
 package capstone.donworry.statistics.service;
 
+import capstone.donworry.expense.domain.ExpenseCategory;
+import capstone.donworry.expense.domain.PaymentMethod;
 import capstone.donworry.member.domain.Member;
 import capstone.donworry.member.repository.MemberRepository;
-import capstone.donworry.statistics.dto.DailyExpenseDTO;
-import capstone.donworry.statistics.dto.PaymentExpenseDTO;
+import capstone.donworry.statistics.dto.*;
 import capstone.donworry.statistics.repository.ExpenseStatisticsRepository;
-import capstone.donworry.statistics.dto.WeeklyExpenseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,34 +52,78 @@ public class StatisticsService {
                 .collect(Collectors.toList());
     }
 
-    public List<DailyExpenseDTO> getDailyExpense(Long memberId, LocalDate startDate, LocalDate endDate){
-        if(!memberRepository.existsById(memberId)){
-            throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
-        }
-
-        List<Object[]> result = expenseStatisticsRepository.findDailyExpense(memberId, startDate, endDate);
-
-        return result.stream()
-                .map(row -> new DailyExpenseDTO(
-                        (LocalDate) row[0],
-                        (Long) row[1]
-                ))
-                .collect(Collectors.toList());
-    }
-
-    public List<PaymentExpenseDTO> getWeeklyPaymentExpense(Long memberId, LocalDate startDate, LocalDate endDate) {
+    public WeeklyDetailExpenseDTO getWeeklyDetailStatistics(Long memberId, LocalDate startDate, LocalDate endDate) {
         if (!memberRepository.existsById(memberId)) {
             throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
         }
 
-        List<Object[]> result = expenseStatisticsRepository.findWeeklyExpenseByPaymentMethod(memberId, startDate, endDate);
+        // 일별 소비
+        List<Object[]> dailyResult = expenseStatisticsRepository.findDailyExpense(memberId, startDate, endDate);
+        List<DailyExpenseDTO> dailyExpenses = dailyResult.stream()
+                .map(row -> new DailyExpenseDTO((LocalDate) row[0], (Long) row[1]))
+                .collect(Collectors.toList());
 
-        return result.stream()
-                .map(row -> new PaymentExpenseDTO(
-                        (String) row[0],
-                        (Long) row[1]
+        // 결제수단별 소비
+        List<Object[]> paymentResult = expenseStatisticsRepository.findExpenseByPaymentMethod(memberId, startDate, endDate);
+        List<PaymentExpenseDTO> paymentExpenses = paymentResult.stream()
+                .map(row -> new PaymentExpenseDTO((PaymentMethod) row[0], (Long) row[1]))
+                .collect(Collectors.toList());
+
+        return new WeeklyDetailExpenseDTO(dailyExpenses, paymentExpenses);
+    }
+
+
+
+    public MonthlyStatisticsDTO getMonthlyStatistics(Long memberId, LocalDate startDate, LocalDate endDate) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        Long totalExpense = expenseStatisticsRepository.findMonthlyTotalExpense(memberId, startDate, endDate);
+        Long goalAmount = member.getGoalAmount();
+
+        List<CategoryExpenseDTO> categoryExpenses = expenseStatisticsRepository
+                .findMonthlyCategoryExpense(memberId, startDate, endDate)
+                .stream()
+                .map(row -> new CategoryExpenseDTO((ExpenseCategory) row[0], (Long) row[1]))
+                .collect(Collectors.toList());
+
+        List<PaymentExpenseDTO> paymentExpenses = expenseStatisticsRepository
+                .findExpenseByPaymentMethod(memberId, startDate, endDate)
+                .stream()
+                .map(row -> new PaymentExpenseDTO((PaymentMethod) row[0], (Long) row[1]))
+                .collect(Collectors.toList());
+
+        return new MonthlyStatisticsDTO(totalExpense, goalAmount, categoryExpenses, paymentExpenses);
+    }
+
+    public CategoryExpenseDetailDTO getCategoryExpenseDetail(Long memberId, ExpenseCategory category, LocalDate startDate, LocalDate endDate) {
+        if (!memberRepository.existsById(memberId)) {
+            throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
+        }
+
+        // 1. 지출 목록
+        List<Object[]> expenseRows = expenseStatisticsRepository.findExpensesByCategory(memberId, category, startDate, endDate);
+        List<ExpenseItemDTO> expenses = expenseRows.stream()
+                .map(row -> new ExpenseItemDTO(
+                        (Long) row[0],           // id
+                        (String) row[1],         // title
+                        (Long) row[2],           // amount
+                        (PaymentMethod) row[3],  // payment method
+                        (LocalDate) row[4]       // date
                 ))
                 .collect(Collectors.toList());
+
+        // 2. 결제수단별 총액
+        List<Object[]> paymentRows = expenseStatisticsRepository.findPaymentSummaryByCategory(memberId, category, startDate, endDate);
+        List<PaymentExpenseDTO> paymentExpenses = paymentRows.stream()
+                .map(row -> new PaymentExpenseDTO(
+                        (PaymentMethod) row[0],         // payment method
+                        (Long) row[1]            // total amount
+                ))
+                .collect(Collectors.toList());
+
+        return new CategoryExpenseDetailDTO(expenses, paymentExpenses);
     }
+
 
 }
