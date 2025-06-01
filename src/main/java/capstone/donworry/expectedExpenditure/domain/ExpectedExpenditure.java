@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Getter
 @Entity
 @NoArgsConstructor
+@Getter
 public class ExpectedExpenditure {
 
     @Id
