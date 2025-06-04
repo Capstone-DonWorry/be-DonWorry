@@ -25,11 +25,7 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-            @RequestBody @Valid MemberJoinRequestDTO memberJoinRequestDTO,
-            BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("입력값 오류");
-        }
+            @RequestBody @Valid MemberJoinRequestDTO memberJoinRequestDTO) {
 
         memberService.join(memberJoinRequestDTO);
         return ResponseEntity.ok(DataResponseDTO.successWithMessage("회원가입 완료", null));

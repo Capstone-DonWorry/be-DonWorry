@@ -4,10 +4,14 @@ import capstone.donworry.expense.domain.Expense;
 import capstone.donworry.expense.domain.ExpenseCategory;
 import capstone.donworry.expense.domain.PaymentMethod;
 import capstone.donworry.member.domain.Member;
+import capstone.donworry.member.dto.MemberInExpenseDTO;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-
+@Data
+@NoArgsConstructor
 public class ExpenseResponseDTO {
 
     private String title;
@@ -16,11 +20,11 @@ public class ExpenseResponseDTO {
     private ExpenseCategory category;
     private PaymentMethod payment;
     private String note;
-    private Member member;
+    private MemberInExpenseDTO member;
 
 
     private ExpenseResponseDTO(String title, Long amount, LocalDate expenseDate,
-                               ExpenseCategory category, PaymentMethod payment, String note, Member member) {
+                               ExpenseCategory category, PaymentMethod payment, String note, MemberInExpenseDTO member) {
         this.title = title;
         this.amount = amount;
         this.expenseDate = expenseDate;
@@ -38,7 +42,7 @@ public class ExpenseResponseDTO {
                 expense.getCategory(),
                 expense.getPayment(),
                 expense.getNote(),
-                expense.getMember()
+                MemberInExpenseDTO.from(expense.getMember())
         );
     }
 }
