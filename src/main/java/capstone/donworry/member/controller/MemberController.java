@@ -10,6 +10,7 @@ import capstone.donworry.member.dto.PasswordChangeRequestDTO;
 import capstone.donworry.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,15 +20,25 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-            @RequestBody @Valid MemberJoinRequestDTO memberJoinRequestDTO) {
-
+            @ModelAttribute @Valid MemberJoinRequestDTO memberJoinRequestDTO,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body("입력값 오류");
+        }
+      
         memberService.join(memberJoinRequestDTO);
+        log.info("memberJoinRequestDto = {}", memberJoinRequestDTO.getAgeGroup());
+        log.info("memberJoinRequestDto = {}", memberJoinRequestDTO.getLoginId());
+        log.info("memberJoinRequestDto = {}", memberJoinRequestDTO.getPassword());
+        log.info("memberJoinRequestDto = {}", memberJoinRequestDTO.getNickname());
+
         return ResponseEntity.ok(DataResponseDTO.successWithMessage("회원가입 완료", null));
 
     }

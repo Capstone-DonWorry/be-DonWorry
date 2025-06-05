@@ -12,13 +12,17 @@ public class LoginResponseDTO {
     private String loginId;
     private String name;
     private MemberRole role;
+    private String nickname;
+    private Long goalAmount;
 
     public static LoginResponseDTO from(Member member, String token) {
         return new LoginResponseDTO(
                 token,
                 member.getLoginId(),
                 member.getName(),
-                member.getRole()
+                member.getRole(),
+                member.getNickname(),
+                member.getGoalAmount()
         );
     }
 }
