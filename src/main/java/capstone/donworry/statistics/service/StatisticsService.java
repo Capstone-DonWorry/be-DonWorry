@@ -9,11 +9,12 @@ import capstone.donworry.statistics.dto.*;
 import capstone.donworry.statistics.repository.ExpenseStatisticsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +78,7 @@ public class StatisticsService {
 
 
 
+    // 한달 간 카테고리별 소비
     public MonthlyStatisticsDTO getMonthlyCategoryStatistics(Long memberId, LocalDate startDate, LocalDate endDate) {
 
         Long totalExpense = expenseStatisticsRepository.findMonthlyTotalExpense(memberId, startDate, endDate);
@@ -99,6 +101,7 @@ public class StatisticsService {
         return new MonthlyStatisticsDTO(totalExpense, goalAmount, categoryExpenses, paymentExpenses);
     }
 
+    // 카테고리별 소비 세부사항
     public CategoryExpenseDetailDTO getCategoryExpenseDetail(Long memberId, ExpenseCategory category, LocalDate startDate, LocalDate endDate) {
         if (!memberRepository.existsById(memberId)) {
             throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
@@ -129,4 +132,52 @@ public class StatisticsService {
     }
 
 
+    // 다른 사용자와 비교
+    public ComparisonStatisticsDTO compareWithOthers(Long memberId, int year, int month, Integer ageGroup) {
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        // 내 지출 합계
+        Long myTotalExpense = expenseStatisticsRepository.findMonthlyTotalExpense(memberId, start, end);
+
+        // 내 Top 3 카테고리
+        List<CategoryExpenseDTO> myTopCategories = expenseStatisticsRepository.findMonthlyCategoryExpense(memberId, start, end)
+                .stream()
+                .map(row -> new CategoryExpenseDTO((ExpenseCategory) row[0], (Long) row[1]))
+                .limit(3)
+                .collect(Collectors.toList());
+
+        // 목표 지출 금액 기준 비교
+        MonthlyExpenseGoal myGoal = monthlyExpenseGoalService.getMonthGoal(memberId, year, month, LocalDate.now());
+        Long goalAmount = myGoal.getGoalAmount();
+
+        Long avgByGoalAmount = Math.round(expenseStatisticsRepository.findAvgMonthlyExpenseByGoalAmount(year, month, goalAmount, start, end));
+        List<CategoryExpenseDTO> topCategoriesByGoalAmount = expenseStatisticsRepository.findTop3CategoriesByGoalAmount(
+                        year, month, goalAmount, start, end, PageRequest.of(0, 3))
+                .stream()
+                .map(row -> new CategoryExpenseDTO((ExpenseCategory) row[0], (Long) row[1]))
+                .collect(Collectors.toList());
+
+        ComparisonGroupData goalAmountComparison = new ComparisonGroupData(avgByGoalAmount, topCategoriesByGoalAmount);
+
+        // 연령대 기준 비교
+        ComparisonGroupData ageGroupComparison = null;
+        if (ageGroup != null){
+            Long avgByAgeGroup = Math.round(expenseStatisticsRepository.findAvgMonthlyExpenseByAgeGroup(ageGroup, start, end));
+            List<CategoryExpenseDTO> topCategoriesByAgeGroup = expenseStatisticsRepository.findTop3CategoriesByAgeGroup(
+                            ageGroup, start, end, PageRequest.of(0, 3))
+                    .stream()
+                    .map(row -> new CategoryExpenseDTO((ExpenseCategory) row[0], (Long) row[1]))
+                    .collect(Collectors.toList());
+
+            ageGroupComparison = new ComparisonGroupData(avgByAgeGroup, topCategoriesByAgeGroup);
+
+        }
+
+
+        return new ComparisonStatisticsDTO(myTotalExpense, myTopCategories, goalAmountComparison, ageGroupComparison);
+
+
+    }
 }
+
