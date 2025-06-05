@@ -1,6 +1,7 @@
 package capstone.donworry.expectedExpenditure.repository;
 
 import capstone.donworry.expectedExpenditure.domain.ExpectedExpenditure;
+import capstone.donworry.expense.domain.Expense;
 import capstone.donworry.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,8 @@ public interface ExpectedExpenditureRepository extends JpaRepository<ExpectedExp
     List<ExpectedExpenditure> findByMemberIdAndDateBetween(
             @Param("memberId") Long memberId,
             @Param("date") LocalDate date);
+
+    @Query("SELECT e FROM ExpectedExpenditure e WHERE e.member.id = :memberId AND e.date BETWEEN :startDate AND :endDate")
+    List<ExpectedExpenditure> findByMemberIdAndExpectedExpenditureDateBetween(Long memberId, LocalDate startDate, LocalDate endDate);
+
 }

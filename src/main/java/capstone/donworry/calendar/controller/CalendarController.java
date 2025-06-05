@@ -1,6 +1,7 @@
 package capstone.donworry.calendar.controller;
 
 import capstone.donworry.calendar.dto.DailyExpenseSummaryDto;
+import capstone.donworry.calendar.dto.MonthlyExpenseSummaryDto;
 import capstone.donworry.calendar.service.CalendarService;
 import capstone.donworry.expense.service.ExpenseService;
 import capstone.donworry.global.response.DataResponseDTO;
@@ -26,22 +27,22 @@ public class CalendarController {
     private final ExpenseService expenseService;
 
     //년/월 보내면 일자별 목표 금액 + 지출합계금액 + 예상지출금액 보내줘야 함
-//    @GetMapping
-//    public ResponseEntity<DataResponseDTO<MonthlyExpenseSummaryDto>> getMonthlyExpenseSummary(
-//            @RequestParam int year,
-//            @RequestParam int month,
-//            @AuthenticationPrincipal CustomUserDetails userDetails) {
-//
-//        Long memberId = userDetails.getMember().getId();
-//
-//        MonthlyExpenseSummaryDto monthlyExpenseSummary =
-//                calendarService.getMonthlyExpenseSummary(year, month, memberId);
-//
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(DataResponseDTO.success(monthlyExpenseSummary));
-//    }
-
     @GetMapping
+    public ResponseEntity<DataResponseDTO<MonthlyExpenseSummaryDto>> getMonthlyExpenseSummary(
+            @RequestParam int year,
+            @RequestParam int month,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        Long memberId = userDetails.getMember().getId();
+
+        MonthlyExpenseSummaryDto monthlyExpenseSummary =
+                calendarService.getMonthlyExpenseSummary(year, month, memberId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(DataResponseDTO.success(monthlyExpenseSummary));
+    }
+
+    @GetMapping("/daily")
     public ResponseEntity<DataResponseDTO<DailyExpenseSummaryDto>> getDailyExpenseSummary(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @AuthenticationPrincipal CustomUserDetails userDetails) {

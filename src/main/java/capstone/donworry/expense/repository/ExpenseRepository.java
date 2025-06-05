@@ -14,7 +14,11 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     Optional<Expense> findByExpenseIdAndMemberId(Long expenseId, Long memberId);
 
     @Query("SELECT e FROM Expense e WHERE e.member.id = :memberId AND e.expenseDate = :date")
-    List<Expense> findAllByMemberIdAndExpenseDateBetween(
+    List<Expense> findAllByMemberIdAndExpenseDate(
             @Param("memberId") Long memberId,
             @Param("date") LocalDate date);
+
+    @Query("SELECT e FROM Expense e WHERE e.member.id = :memberId AND e.expenseDate BETWEEN :startDate AND :endDate")
+    List<Expense> findByMemberIdAndExpenseDateBetween(Long memberId, LocalDate startDate, LocalDate endDate);
+
 }
