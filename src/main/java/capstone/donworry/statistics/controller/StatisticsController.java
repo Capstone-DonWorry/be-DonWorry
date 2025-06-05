@@ -57,7 +57,7 @@ public class StatisticsController {
 
 
     @GetMapping("/monthly/category")
-    public ResponseEntity<DataResponseDTO<MonthlyStatisticsDTO>> getMonthlyStatistics(
+    public ResponseEntity<DataResponseDTO<MonthlyStatisticsDTO>> getMonthlyCategoryStatistics(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam int year,
             @RequestParam int month) {
@@ -66,7 +66,7 @@ public class StatisticsController {
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.with(TemporalAdjusters.lastDayOfMonth());
 
-        MonthlyStatisticsDTO dto = statisticsService.getMonthlyStatistics(memberId, startDate, endDate);
+        MonthlyStatisticsDTO dto = statisticsService.getMonthlyCategoryStatistics(memberId, startDate, endDate);
 
         return ResponseEntity.ok(DataResponseDTO.success(dto));
     }

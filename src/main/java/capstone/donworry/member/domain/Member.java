@@ -20,7 +20,6 @@ public class Member {
     private String name;
     private String nickname;
     private String ageGroup;
-    private Long goalAmount;
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
@@ -31,11 +30,11 @@ public class Member {
     private String providerId;
 
     public void updateInfo(String name, String nickname, String ageGroup,
-                           Long goalAmount, String phoneNumber) {
+                           String phoneNumber) {
         this.name = name;
         this.nickname = nickname;
         this.ageGroup = ageGroup;
-        this.goalAmount = goalAmount;
         this.phoneNumber = phoneNumber;
     }
+
 }

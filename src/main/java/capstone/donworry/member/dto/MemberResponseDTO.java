@@ -16,13 +16,13 @@ public class MemberResponseDTO {
     private String phoneNumber;
     private MemberRole role;
 
-    public static MemberResponseDTO from(Member member) {
+    public static MemberResponseDTO from(Member member, Long goalAmount) {
         return new MemberResponseDTO(
                 member.getLoginId(),
                 member.getName(),
                 member.getNickname(),
                 member.getAgeGroup(),
-                member.getGoalAmount(),
+                goalAmount,
                 member.getPhoneNumber(),
                 member.getRole()
         );

@@ -4,14 +4,16 @@ import capstone.donworry.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "monthly_expense_goal",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "year_value", "month_value"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "year_num", "month_num"}))
 @NoArgsConstructor
 @Getter
+@Setter
 public class MonthlyExpenseGoal {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +24,11 @@ public class MonthlyExpenseGoal {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(name = "year_value")
+
+    @Column(name = "year_num")
     private int year;
 
-    @Column(name = "month_value")
+    @Column(name = "month_num")
     private int month;
 
     private Long goalAmount;

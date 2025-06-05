@@ -8,14 +8,17 @@ import capstone.donworry.member.dto.MemberResponseDTO;
 import capstone.donworry.member.dto.MemberUpdateRequestDTO;
 import capstone.donworry.member.dto.PasswordChangeRequestDTO;
 import capstone.donworry.member.service.MemberService;
+import capstone.donworry.monthlyExpenseGoals.domain.MonthlyExpenseGoal;
+import capstone.donworry.monthlyExpenseGoals.service.MonthlyExpenseGoalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MonthlyExpenseGoalService monthlyExpenseGoalService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
@@ -58,7 +62,11 @@ public class MemberController {
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         Member member = memberService.getLoginMemberByLoginId(userDetails.getUsername());
-        MemberResponseDTO responseDTO = MemberResponseDTO.from(member);
+        LocalDate today = LocalDate.now();
+        MonthlyExpenseGoal monthlyExpenseGoal = monthlyExpenseGoalService
+                .getMonthGoal(member.getId(), today.getYear(), today.getMonthValue(), today);
+
+        MemberResponseDTO responseDTO = MemberResponseDTO.from(member, monthlyExpenseGoal.getGoalAmount());
 
         return ResponseEntity.ok(DataResponseDTO.success(responseDTO));
     }
@@ -71,7 +79,12 @@ public class MemberController {
         Long memberId = userDetails.getMember().getId();
         Member updatedMember = memberService.updateMember(memberId, requestDTO);
 
-        MemberResponseDTO responseDTO = MemberResponseDTO.from(updatedMember);
+        LocalDate today = LocalDate.now();
+        MonthlyExpenseGoal monthlyExpenseGoal = monthlyExpenseGoalService
+                .getMonthGoal(memberId, today.getYear(), today.getMonthValue(), today);
+
+
+        MemberResponseDTO responseDTO = MemberResponseDTO.from(updatedMember, monthlyExpenseGoal.getGoalAmount());
         return ResponseEntity.ok(DataResponseDTO.successWithMessage("정보 수정 완료", responseDTO));
     }
 

@@ -27,7 +27,6 @@ public class MemberJoinRequestDTO {
                 .password(this.password)
                 .name(this.name)
                 .phoneNumber(this.phoneNumber)
-                .goalAmount(this.goalAmount)
                 .ageGroup(this.ageGroup)
                 .nickname(this.nickname)
                 .role(MemberRole.USER)
