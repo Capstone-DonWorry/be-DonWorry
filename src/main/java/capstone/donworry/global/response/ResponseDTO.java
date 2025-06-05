@@ -1,14 +1,19 @@
 package capstone.donworry.global.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.http.HttpStatus;
 
 public class ResponseDTO {
 
-    private String status;
+    @JsonProperty("status")
+    private final String status;
 
-    private HttpStatus code;
+    @JsonProperty("code")
+    private final HttpStatus code;
 
-    private String message;
+    @JsonProperty("message")
+    private final String message;
+
 
     public ResponseDTO(String status, HttpStatus code, String message) {
         this.status = status;

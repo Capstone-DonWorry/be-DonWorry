@@ -7,6 +7,7 @@ import capstone.donworry.expense.service.ExpenseService;
 import capstone.donworry.global.response.DataResponseDTO;
 import capstone.donworry.login.common.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,19 +22,21 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/calendar")
 @RequiredArgsConstructor
+@Slf4j
 public class CalendarController {
 
     private final CalendarService calendarService;
     private final ExpenseService expenseService;
 
     //년/월 보내면 일자별 목표 금액 + 지출합계금액 + 예상지출금액 보내줘야 함
-    @GetMapping
+    @GetMapping("/monthly")
     public ResponseEntity<DataResponseDTO<MonthlyExpenseSummaryDto>> getMonthlyExpenseSummary(
             @RequestParam int year,
             @RequestParam int month,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         Long memberId = userDetails.getMember().getId();
+        log.info("memberId = {}", memberId);
 
         MonthlyExpenseSummaryDto monthlyExpenseSummary =
                 calendarService.getMonthlyExpenseSummary(year, month, memberId);

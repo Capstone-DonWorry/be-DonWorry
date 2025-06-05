@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "monthly_expense_goal",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "year", "month"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "year_value", "month_value"}))
 @NoArgsConstructor
 @Getter
 public class MonthlyExpenseGoal {
@@ -22,8 +22,10 @@ public class MonthlyExpenseGoal {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(name = "year_value")
     private int year;
 
+    @Column(name = "month_value")
     private int month;
 
     private Long goalAmount;
