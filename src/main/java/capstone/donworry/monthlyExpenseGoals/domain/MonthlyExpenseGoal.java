@@ -24,6 +24,7 @@ public class MonthlyExpenseGoal {
     @JoinColumn(name = "member_id")
     private Member member;
 
+
     @Column(name = "year_num")
     private int year;
 
