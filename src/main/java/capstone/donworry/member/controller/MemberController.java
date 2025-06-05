@@ -32,7 +32,7 @@ public class MemberController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("입력값 오류");
         }
-
+      
         memberService.join(memberJoinRequestDTO);
         log.info("memberJoinRequestDto = {}", memberJoinRequestDTO.getAgeGroup());
         log.info("memberJoinRequestDto = {}", memberJoinRequestDTO.getLoginId());
