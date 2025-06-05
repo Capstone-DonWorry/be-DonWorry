@@ -7,6 +7,8 @@ import capstone.donworry.login.common.LoginRequestDTO;
 import capstone.donworry.login.common.LoginResponseDTO;
 import capstone.donworry.member.domain.Member;
 import capstone.donworry.member.service.MemberService;
+import capstone.donworry.monthlyExpenseGoals.domain.MonthlyExpenseGoal;
+import capstone.donworry.monthlyExpenseGoals.service.MonthlyExpenseGoalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +17,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/jwt")
 public class JwtLoginController {
 
     private final MemberService memberService;
+    private final MonthlyExpenseGoalService monthlyExpenseGoalService;
     private final JwtUtil jwtUtil;
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDTO) {
@@ -40,7 +44,17 @@ public class JwtLoginController {
 
         String token = jwtUtil.generateToken(member.getLoginId(), member.getRole().name());
 
-        LoginResponseDTO responseDTO = LoginResponseDTO.from(member, token);
+        LocalDate now = LocalDate.now();
+
+        //memberId로 현재 목표 금액 구하기
+        MonthlyExpenseGoal monthGoal = monthlyExpenseGoalService.getMonthGoal(
+                member.getId(),
+                now.getYear(),
+                now.getMonthValue(),
+                now
+        );
+
+        LoginResponseDTO responseDTO = LoginResponseDTO.from(member, token, monthGoal);
 
         return ResponseEntity.ok(DataResponseDTO.success(responseDTO));
     }
