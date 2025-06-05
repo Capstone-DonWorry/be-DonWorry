@@ -2,8 +2,9 @@ package capstone.donworry.statistics.service;
 
 import capstone.donworry.expense.domain.ExpenseCategory;
 import capstone.donworry.expense.domain.PaymentMethod;
-import capstone.donworry.member.domain.Member;
 import capstone.donworry.member.repository.MemberRepository;
+import capstone.donworry.monthlyExpenseGoals.domain.MonthlyExpenseGoal;
+import capstone.donworry.monthlyExpenseGoals.service.MonthlyExpenseGoalService;
 import capstone.donworry.statistics.dto.*;
 import capstone.donworry.statistics.repository.ExpenseStatisticsRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,12 +22,14 @@ public class StatisticsService {
 
     private final ExpenseStatisticsRepository expenseStatisticsRepository;
     private final MemberRepository memberRepository;
+    private final MonthlyExpenseGoalService monthlyExpenseGoalService;
 
+    // 한달간 주간 소비 요약
     public List<WeeklyExpenseDTO> getWeeklyExpense(Long memberId, LocalDate startDate, LocalDate endDate) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        Long goalAmount = member.getGoalAmount();
+        MonthlyExpenseGoal monthlyExpenseGoal = monthlyExpenseGoalService
+                .getMonthGoal(memberId, startDate.getYear(), startDate.getMonthValue(), LocalDate.now());
+        Long goalAmount = monthlyExpenseGoal.getGoalAmount();
         int daysInMonth = startDate.lengthOfMonth();
         long dailyGoal = goalAmount / daysInMonth;
 
@@ -47,11 +49,12 @@ public class StatisticsService {
                     LocalDate weekEnd = weekStart.plusDays(6);
 
                     return new WeeklyExpenseDTO(
-                            year, week, totalSpent, weekStart, weekEnd, goalAmount);
+                            year, week, totalSpent, weekStart, weekEnd, dailyGoal);
                 })
                 .collect(Collectors.toList());
     }
 
+    // 주간 소비 세부사항
     public WeeklyDetailExpenseDTO getWeeklyDetailStatistics(Long memberId, LocalDate startDate, LocalDate endDate) {
         if (!memberRepository.existsById(memberId)) {
             throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
@@ -74,12 +77,12 @@ public class StatisticsService {
 
 
 
-    public MonthlyStatisticsDTO getMonthlyStatistics(Long memberId, LocalDate startDate, LocalDate endDate) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+    public MonthlyStatisticsDTO getMonthlyCategoryStatistics(Long memberId, LocalDate startDate, LocalDate endDate) {
 
         Long totalExpense = expenseStatisticsRepository.findMonthlyTotalExpense(memberId, startDate, endDate);
-        Long goalAmount = member.getGoalAmount();
+        MonthlyExpenseGoal expenseGoal = monthlyExpenseGoalService
+                .getMonthGoal(memberId, startDate.getYear(), startDate.getMonthValue(), LocalDate.now());
+        Long goalAmount = expenseGoal.getGoalAmount();
 
         List<CategoryExpenseDTO> categoryExpenses = expenseStatisticsRepository
                 .findMonthlyCategoryExpense(memberId, startDate, endDate)
