@@ -2,6 +2,7 @@ package capstone.donworry.login.common;
 
 import capstone.donworry.member.domain.Member;
 import capstone.donworry.member.domain.MemberRole;
+import capstone.donworry.monthlyExpenseGoals.domain.MonthlyExpenseGoal;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,16 +14,16 @@ public class LoginResponseDTO {
     private String name;
     private MemberRole role;
     private String nickname;
-    private Long goalAmount;
+    private Long monthGoal;
 
-    public static LoginResponseDTO from(Member member, String token) {
+    public static LoginResponseDTO from(Member member, String token, MonthlyExpenseGoal monthlyExpenseGoal) {
         return new LoginResponseDTO(
                 token,
                 member.getLoginId(),
                 member.getName(),
                 member.getRole(),
                 member.getNickname(),
-                member.getGoalAmount()
+                monthlyExpenseGoal.getGoalAmount()
         );
     }
 }
