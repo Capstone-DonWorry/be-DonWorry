@@ -25,7 +25,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final JwtUtil jwtUtil;
 
     private final Map<String, Function<Map<String, Object>, OAuth2UserInfo>> userInfoFactory = Map.of(
-//            "google", GoogleOAuth2UserInfo::new,
             "kakao", KakaoOAuth2UserInfo::new
     );
 
@@ -38,9 +37,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("지원하지 않는 provider: " + provider);
         }).apply(oAuth2User.getAttributes());
 
-
-        String providerId = oAuth2UserInfo.getProviderId();
-        String loginId = provider + "_" + providerId;
+        String loginId = generateLoginId(oAuth2UserInfo);
         String name = oAuth2UserInfo.getName();
 
         Member member = memberRepository.findByLoginId(loginId);
@@ -49,14 +46,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             member = Member.builder()
                     .loginId(loginId)
                     .name(name)
-                    .provider(provider)
-                    .providerId(providerId)
                     .role(MemberRole.USER)
+                    .provider(provider)
                     .build();
             memberRepository.save(member);
         }
         String token = jwtUtil.generateToken(member.getLoginId(), member.getRole().name());
 
         return new CustomUserDetails(member, oAuth2User.getAttributes(), token);
+    }
+
+    private String generateLoginId(OAuth2UserInfo userInfo) {
+        return userInfo.getProvider() + "_" + userInfo.getId();
     }
 }
