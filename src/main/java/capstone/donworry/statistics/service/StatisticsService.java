@@ -2,6 +2,7 @@ package capstone.donworry.statistics.service;
 
 import capstone.donworry.expense.domain.ExpenseCategory;
 import capstone.donworry.expense.domain.PaymentMethod;
+import capstone.donworry.member.domain.Member;
 import capstone.donworry.member.repository.MemberRepository;
 import capstone.donworry.monthlyExpenseGoals.domain.MonthlyExpenseGoal;
 import capstone.donworry.monthlyExpenseGoals.service.MonthlyExpenseGoalService;
@@ -133,7 +134,7 @@ public class StatisticsService {
 
 
     // 다른 사용자와 비교
-    public ComparisonStatisticsDTO compareWithOthers(Long memberId, int year, int month, Integer ageGroup) {
+    public ComparisonStatisticsDTO compareWithOthers(Long memberId, int year, int month) {
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
@@ -151,7 +152,8 @@ public class StatisticsService {
         MonthlyExpenseGoal myGoal = monthlyExpenseGoalService.getMonthGoal(memberId, year, month, LocalDate.now());
         Long goalAmount = myGoal.getGoalAmount();
 
-        Long avgByGoalAmount = Math.round(expenseStatisticsRepository.findAvgMonthlyExpenseByGoalAmount(year, month, goalAmount, start, end));
+        Double avgByGoalAmountDouble = expenseStatisticsRepository.findAvgMonthlyExpenseByGoalAmount(year, month, goalAmount, start, end);
+        Long avgByGoalAmount = (avgByGoalAmountDouble == null) ? 0L : Math.round(avgByGoalAmountDouble);
         List<CategoryExpenseDTO> topCategoriesByGoalAmount = expenseStatisticsRepository.findTop3CategoriesByGoalAmount(
                         year, month, goalAmount, start, end, PageRequest.of(0, 3))
                 .stream()
@@ -162,8 +164,12 @@ public class StatisticsService {
 
         // 연령대 기준 비교
         ComparisonGroupData ageGroupComparison = null;
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+        String ageGroup = member.getAgeGroup();
         if (ageGroup != null){
-            Long avgByAgeGroup = Math.round(expenseStatisticsRepository.findAvgMonthlyExpenseByAgeGroup(ageGroup, start, end));
+            Double avgByAgeGroupDouble = expenseStatisticsRepository.findAvgMonthlyExpenseByAgeGroup(ageGroup, start, end);
+            Long avgByAgeGroup = (avgByAgeGroupDouble == null) ? 0L : Math.round(avgByAgeGroupDouble);
             List<CategoryExpenseDTO> topCategoriesByAgeGroup = expenseStatisticsRepository.findTop3CategoriesByAgeGroup(
                             ageGroup, start, end, PageRequest.of(0, 3))
                     .stream()

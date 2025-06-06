@@ -97,11 +97,10 @@ public class StatisticsController {
     public ResponseEntity<DataResponseDTO<ComparisonStatisticsDTO>> getComparisonStatistics(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam int year,
-            @RequestParam int month,
-            @RequestParam Integer ageGroup) {
+            @RequestParam int month) {
 
         Long memberId = userDetails.getMember().getId();
-        ComparisonStatisticsDTO dto = statisticsService.compareWithOthers(memberId, year, month, ageGroup);
+        ComparisonStatisticsDTO dto = statisticsService.compareWithOthers(memberId, year, month);
 
         return ResponseEntity.ok(DataResponseDTO.success(dto));
     }

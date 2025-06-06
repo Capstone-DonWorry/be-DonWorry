@@ -134,7 +134,7 @@ public interface ExpenseStatisticsRepository extends JpaRepository<Expense, Long
         GROUP BY e.member.id
     ) e
 """)
-    Double findAvgMonthlyExpenseByAgeGroup(@Param("ageGroup") int ageGroup,
+    Double findAvgMonthlyExpenseByAgeGroup(@Param("ageGroup") String ageGroup,
                                            @Param("startDate") LocalDate startDate,
                                            @Param("endDate") LocalDate endDate);
 
@@ -147,7 +147,7 @@ public interface ExpenseStatisticsRepository extends JpaRepository<Expense, Long
     GROUP BY e.category
     ORDER BY totalAmount DESC
 """)
-    List<Object[]> findTop3CategoriesByAgeGroup(@Param("ageGroup") int ageGroup,
+    List<Object[]> findTop3CategoriesByAgeGroup(@Param("ageGroup") String ageGroup,
                                                 @Param("startDate") LocalDate startDate,
                                                 @Param("endDate") LocalDate endDate,
                                                 Pageable pageable);
