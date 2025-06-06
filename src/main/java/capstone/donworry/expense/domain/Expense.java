@@ -40,28 +40,33 @@ public class Expense {
     @Column(name = "note")
     private String note;
 
+    @Column(name = "bankName")
+    private String bankName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Builder
-    public Expense(String title, Long amount, LocalDate expenseDate, ExpenseCategory category, PaymentMethod payment, String note, Member member) {
+    public Expense(String title, Long amount, LocalDate expenseDate, ExpenseCategory category, PaymentMethod payment, String note, String bankName, Member member) {
         this.title = title;
         this.amount = amount;
         this.expenseDate = expenseDate;
         this.category = category;
         this.payment = payment;
         this.note = note;
+        this.bankName = bankName;
         this.member = member;
     }
 
-    public void update(String title, Long amount, LocalDate expenseDate, ExpenseCategory category, PaymentMethod payment, String note, Member member) {
+    public void update(String title, Long amount, LocalDate expenseDate, ExpenseCategory category, PaymentMethod payment, String note, String bankName, Member member) {
         this.title = title;
         this.amount = amount;
         this.expenseDate = expenseDate;
         this.category = category;
         this.payment = payment;
         this.note = note;
+        this.bankName = bankName;
         this.member = member;
     }
 }

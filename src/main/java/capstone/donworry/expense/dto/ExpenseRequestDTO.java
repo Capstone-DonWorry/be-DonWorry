@@ -20,6 +20,7 @@ public class ExpenseRequestDTO {
     private ExpenseCategory category;
     private PaymentMethod payment;
     private String note;
+    private String bankName;
     private Long memberId;
 
 
@@ -31,6 +32,7 @@ public class ExpenseRequestDTO {
                 .category(category)
                 .payment(payment)
                 .note(note)
+                .bankName(bankName)
                 .member(member)
                 .build();
     }

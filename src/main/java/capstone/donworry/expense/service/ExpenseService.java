@@ -53,6 +53,7 @@ public class ExpenseService {
                 expenseRequestDTO.getCategory(),
                 expenseRequestDTO.getPayment(),
                 expenseRequestDTO.getNote(),
+                expenseRequestDTO.getBankName(),
                 savedExpense.getMember());
 
         return savedExpense;
