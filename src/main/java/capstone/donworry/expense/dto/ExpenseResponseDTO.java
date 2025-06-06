@@ -20,17 +20,20 @@ public class ExpenseResponseDTO {
     private ExpenseCategory category;
     private PaymentMethod payment;
     private String note;
+    private String bankName;
     private MemberInExpenseDTO member;
 
 
     private ExpenseResponseDTO(String title, Long amount, LocalDate expenseDate,
-                               ExpenseCategory category, PaymentMethod payment, String note, MemberInExpenseDTO member) {
+                               ExpenseCategory category, PaymentMethod payment, String note,
+                               String bankName, MemberInExpenseDTO member) {
         this.title = title;
         this.amount = amount;
         this.expenseDate = expenseDate;
         this.category = category;
         this.payment = payment;
         this.note = note;
+        this.bankName = bankName;
         this.member = member;
     }
 
@@ -42,6 +45,7 @@ public class ExpenseResponseDTO {
                 expense.getCategory(),
                 expense.getPayment(),
                 expense.getNote(),
+                expense.getBankName(),
                 MemberInExpenseDTO.from(expense.getMember())
         );
     }
