@@ -9,6 +9,7 @@ import capstone.donworry.global.response.DataResponseDTO;
 import capstone.donworry.login.common.CustomUserDetails;
 import capstone.donworry.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/expense")
+@Slf4j
 public class ExpenseController {
 
     private final ExpenseService expenseService;
@@ -58,6 +60,9 @@ public class ExpenseController {
         Long memberId = userDetails.getMember().getId();
         Long savedId = expenseService.addExpense(expenseRequestDTO, memberId);
 
+        log.info("expenseDtoAMount = {}", expenseRequestDTO.getAmount());
+        log.info("expenseDtoCategory = {}", expenseRequestDTO.getCategory());
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(DataResponseDTO.success(new CreatedIdResponseDTO(savedId)));
     }
@@ -70,6 +75,8 @@ public class ExpenseController {
 
         Long memberId = userDetails.getMember().getId();
         expenseService.deleteExpense(id, memberId);
+
+        log.info("delete expenseId = {}", id);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(DataResponseDTO.success(null));
@@ -84,6 +91,9 @@ public class ExpenseController {
 
         Long memberId = userDetails.getMember().getId();
         Expense updateExpense = expenseService.updateExpense(id, memberId, expenseRequestDTO);
+
+        log.info("expenseDtoAMount = {}", expenseRequestDTO.getAmount());
+        log.info("expenseDtoCategory = {}", expenseRequestDTO.getCategory());
 
         ExpenseResponseDTO expenseResponseDTO = ExpenseResponseDTO.from(updateExpense);
         return ResponseEntity.status(HttpStatus.OK)

@@ -7,6 +7,8 @@ import java.time.LocalDate;
 
 public class ExpectedExpenditureResponseDTO {
 
+    private Long id;
+
     private String details;
 
     private Long amount;
@@ -15,7 +17,8 @@ public class ExpectedExpenditureResponseDTO {
 
     private Member member;
 
-    private ExpectedExpenditureResponseDTO(String details, Long amount, LocalDate date, Member member) {
+    private ExpectedExpenditureResponseDTO(Long id, String details, Long amount, LocalDate date, Member member) {
+        this.id = id;
         this.details = details;
         this.amount = amount;
         this.date = date;
@@ -24,6 +27,7 @@ public class ExpectedExpenditureResponseDTO {
 
     public static ExpectedExpenditureResponseDTO from(ExpectedExpenditure expectedExpenditure) {
         return new ExpectedExpenditureResponseDTO(
+                expectedExpenditure.getExpectedExpenditureId(),
                 expectedExpenditure.getDetails(),
                 expectedExpenditure.getAmount(),
                 expectedExpenditure.getDate(),
