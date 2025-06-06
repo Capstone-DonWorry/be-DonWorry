@@ -27,7 +27,6 @@ public class Member {
 
     // oauth
     private String provider;
-//    private String providerId;
 
     public void updateInfo(String name, String nickname, String ageGroup,
                            String phoneNumber) {
