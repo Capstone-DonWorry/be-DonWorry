@@ -4,10 +4,12 @@ import capstone.donworry.calendar.dto.DailyExpenseSummaryDto;
 import capstone.donworry.calendar.dto.DailySummaryDto;
 import capstone.donworry.calendar.dto.MonthlyExpenseSummaryDto;
 import capstone.donworry.expectedExpenditure.domain.ExpectedExpenditure;
+import capstone.donworry.expectedExpenditure.dto.ExpectedExpenditureResponseDTO;
 import capstone.donworry.expectedExpenditure.repository.ExpectedExpenditureRepository;
 import capstone.donworry.expense.domain.Expense;
 import capstone.donworry.expense.domain.ExpenseCategory;
 import capstone.donworry.expense.domain.PaymentMethod;
+import capstone.donworry.expense.dto.ExpenseResponseDTO;
 import capstone.donworry.expense.repository.ExpenseRepository;
 import capstone.donworry.monthlyExpenseGoals.domain.MonthlyExpenseGoal;
 import capstone.donworry.monthlyExpenseGoals.repository.MonthlyExpenseGoalRepository;
@@ -18,7 +20,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,9 +84,10 @@ public class CalendarService {
         //날짜별 지출 금액, 예상 지출 금액, 예상 목표 금액 구하기
         YearMonth yearMonth = YearMonth.of(year, month);
         int daysInMonth = yearMonth.lengthOfMonth();
-        Long dailyGoalTemp = remaining / daysInMonth;
+        Long dailyGoalTemp = goalAmount / daysInMonth;
 
-        List<DailySummaryDto> dailySummaries = new ArrayList<>();
+        Map<LocalDate, DailySummaryDto> dailySummaries = new LinkedHashMap<>();
+
         for (int day = 1; day <= daysInMonth; day++) {
             LocalDate date = LocalDate.of(year, month, day);
 
@@ -101,17 +106,25 @@ public class CalendarService {
             //목표 지출 금액
             Long dailyGoal = dailyGoalTemp + dailyTotalExpectedExpense;
 
+            //지출 단계 표시(그라데이션)
+            int dailyLevel = expenseLevel(dailyTotalExpense, dailyTotalExpectedExpense, dailyGoal);
+
             //현재 날짜에 있는 지출 리스트와 예상지출 리스트 보내기
-            List<Expense> dailyExpenseList = expenses.stream()
-                    .filter(e -> e.getExpenseDate().isEqual(date)).toList();
+            List<ExpenseResponseDTO> dailyExpenseList = expenses.stream()
+                    .filter(e -> e.getExpenseDate().isEqual(date))
+                    .map(ExpenseResponseDTO::from)
+                    .toList();
 
-            List<ExpectedExpenditure> dailyExpectedList = expectedExpenses.stream()
-                    .filter(e -> e.getDate().isEqual(date)).toList();
+            List<ExpectedExpenditureResponseDTO> dailyExpectedList = expectedExpenses.stream()
+                    .filter(e -> e.getDate().isEqual(date))
+                    .map(ExpectedExpenditureResponseDTO::from)
+                    .toList();
 
-            dailySummaries.add(
+            dailySummaries.put(date,
                     new DailySummaryDto(dailyTotalExpense,
                             dailyTotalExpectedExpense,
                             dailyGoal,
+                            dailyLevel,
                             dailyExpenseList,
                             dailyExpectedList)
             );
@@ -125,5 +138,15 @@ public class CalendarService {
                 .cashExpenses(cashExpenseSum)
                 .days(dailySummaries)
                 .build();
+    }
+
+    private int expenseLevel(Long dailyExpense, Long dailyExpectedExpense, Long dailyGoal){
+        Long total = dailyExpense + dailyExpectedExpense;
+        if(total <= dailyGoal) return 1;
+        else if(total <= dailyGoal * 1.25) return 2;
+        else if(total <= dailyGoal * 1.5) return 3;
+        else if(total <= dailyGoal * 1.75) return 4;
+        else if(total <= dailyGoal * 2.0) return 5;
+        else return 6;
     }
 }

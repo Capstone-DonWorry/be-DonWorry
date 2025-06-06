@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class ExpenseResponseDTO {
 
+    private Long id;
     private String title;
     private Long amount;
     private LocalDate expenseDate;
@@ -24,9 +25,10 @@ public class ExpenseResponseDTO {
     private MemberInExpenseDTO member;
 
 
-    private ExpenseResponseDTO(String title, Long amount, LocalDate expenseDate,
+    private ExpenseResponseDTO(Long id, String title, Long amount, LocalDate expenseDate,
                                ExpenseCategory category, PaymentMethod payment, String note,
                                String bankName, MemberInExpenseDTO member) {
+        this.id = id;
         this.title = title;
         this.amount = amount;
         this.expenseDate = expenseDate;
@@ -39,6 +41,7 @@ public class ExpenseResponseDTO {
 
     public static ExpenseResponseDTO from(Expense expense) {
         return new ExpenseResponseDTO(
+                expense.getExpenseId(),
                 expense.getTitle(),
                 expense.getAmount(),
                 expense.getExpenseDate(),
