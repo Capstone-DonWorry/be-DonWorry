@@ -106,6 +106,9 @@ public class CalendarService {
             //목표 지출 금액
             Long dailyGoal = dailyGoalTemp + dailyTotalExpectedExpense;
 
+            //지출 단계 표시(그라데이션)
+            int dailyLevel = expenseLevel(dailyTotalExpense, dailyTotalExpectedExpense, dailyGoal);
+
             //현재 날짜에 있는 지출 리스트와 예상지출 리스트 보내기
             List<ExpenseResponseDTO> dailyExpenseList = expenses.stream()
                     .filter(e -> e.getExpenseDate().isEqual(date))
@@ -121,6 +124,7 @@ public class CalendarService {
                     new DailySummaryDto(dailyTotalExpense,
                             dailyTotalExpectedExpense,
                             dailyGoal,
+                            dailyLevel,
                             dailyExpenseList,
                             dailyExpectedList)
             );
@@ -134,5 +138,15 @@ public class CalendarService {
                 .cashExpenses(cashExpenseSum)
                 .days(dailySummaries)
                 .build();
+    }
+
+    private int expenseLevel(Long dailyExpense, Long dailyExpectedExpense, Long dailyGoal){
+        Long total = dailyExpense + dailyExpectedExpense;
+        if(total <= dailyGoal) return 1;
+        else if(total <= dailyGoal * 1.25) return 2;
+        else if(total <= dailyGoal * 1.5) return 3;
+        else if(total <= dailyGoal * 1.75) return 4;
+        else if(total <= dailyGoal * 2.0) return 5;
+        else return 6;
     }
 }

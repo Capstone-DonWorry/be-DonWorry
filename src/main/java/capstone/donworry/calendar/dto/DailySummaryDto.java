@@ -11,17 +11,20 @@ public class DailySummaryDto {
     public Long dailyTotalExpense;
     public Long dailyTotalExpectedExpense;
     public Long dailyGoal;
+    public int dailyLevel;
     public List<ExpenseResponseDTO> dailyExpenseList;
     public List<ExpectedExpenditureResponseDTO> dailyExpectedList;
 
     public DailySummaryDto(Long dailyTotalExpense,
                            Long dailyTotalExpectedExpense,
                            Long dailyGoal,
+                           int dailyLevel,
                            List<ExpenseResponseDTO> dailyExpenseList,
                            List<ExpectedExpenditureResponseDTO> dailyExpectedList) {
         this.dailyTotalExpense = dailyTotalExpense;
         this.dailyTotalExpectedExpense = dailyTotalExpectedExpense;
         this.dailyGoal = dailyGoal;
+        this.dailyLevel = dailyLevel;
         this.dailyExpenseList = dailyExpenseList;
         this.dailyExpectedList = dailyExpectedList;
     }
