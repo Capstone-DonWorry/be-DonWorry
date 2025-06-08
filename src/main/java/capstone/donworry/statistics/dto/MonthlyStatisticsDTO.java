@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class MonthlyStatisticsDTO {
-    private Long totalSpent;
+    private Long totalExpense;
     private Long goalAmount;
     private List<CategoryExpenseDTO> categoryExpenses;
     private List<PaymentExpenseDTO> paymentMethodExpenses;
