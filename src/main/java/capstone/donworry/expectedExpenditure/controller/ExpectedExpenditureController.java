@@ -8,6 +8,7 @@ import capstone.donworry.expectedExpenditure.service.ExpectedExpenditureService;
 import capstone.donworry.global.response.DataResponseDTO;
 import capstone.donworry.login.common.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/expectedExpenditure")
 @RequiredArgsConstructor
+@Slf4j
 public class ExpectedExpenditureController {
 
     public final ExpectedExpenditureService expectedExpenditureService;
@@ -42,6 +44,10 @@ public class ExpectedExpenditureController {
         Long memberId = userDetails.getMember().getId();
         Long savedId = expectedExpenditureService.saveExpectedExpenditure(memberId, expectedExpenditureRequestDTO);
 
+        log.info("expectedExpenditure.getDetails = {}", expectedExpenditureRequestDTO.getDetails());
+        log.info("expectedExpenditure.getAmount = {}", expectedExpenditureRequestDTO.getAmount());
+        log.info("expectedExpenditure.getDate = {}", expectedExpenditureRequestDTO.getDate());
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(DataResponseDTO.success(new CreatedIdResponseDTO(savedId)));
     }
@@ -54,8 +60,13 @@ public class ExpectedExpenditureController {
 
         Long memberId = userDetails.getMember().getId();
         ExpectedExpenditure updatedExpectedExpenditure = expectedExpenditureService.
-                updateExpectedExpenditure(id, memberId, expectedExpenditureRequestDTO);
+                updateExpectedExpenditure(memberId, id, expectedExpenditureRequestDTO);
         ExpectedExpenditureResponseDTO expectedExpenditureResponseDTO = ExpectedExpenditureResponseDTO.from(updatedExpectedExpenditure);
+
+        log.info("expectedExpenditure.getDetails = {}", expectedExpenditureRequestDTO.getDetails());
+        log.info("expectedExpenditure.getAmount = {}", expectedExpenditureRequestDTO.getAmount());
+        log.info("expectedExpenditure.getDate = {}", expectedExpenditureRequestDTO.getDate());
+
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(DataResponseDTO.success(expectedExpenditureResponseDTO));

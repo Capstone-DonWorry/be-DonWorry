@@ -2,9 +2,12 @@ package capstone.donworry.expectedExpenditure.dto;
 
 import capstone.donworry.expectedExpenditure.domain.ExpectedExpenditure;
 import capstone.donworry.member.domain.Member;
+import capstone.donworry.member.dto.MemberInExpenseDTO;
+import lombok.Getter;
 
 import java.time.LocalDate;
 
+@Getter
 public class ExpectedExpenditureResponseDTO {
 
     private Long id;
@@ -15,14 +18,14 @@ public class ExpectedExpenditureResponseDTO {
 
     private LocalDate date;
 
-    private Member member;
+    private MemberInExpenseDTO memberInExpenseDTO;
 
-    private ExpectedExpenditureResponseDTO(Long id, String details, Long amount, LocalDate date, Member member) {
+    private ExpectedExpenditureResponseDTO(Long id, String details, Long amount, LocalDate date, MemberInExpenseDTO member) {
         this.id = id;
         this.details = details;
         this.amount = amount;
         this.date = date;
-        this.member = member;
+        this.memberInExpenseDTO = member;
     }
 
     public static ExpectedExpenditureResponseDTO from(ExpectedExpenditure expectedExpenditure) {
@@ -31,6 +34,6 @@ public class ExpectedExpenditureResponseDTO {
                 expectedExpenditure.getDetails(),
                 expectedExpenditure.getAmount(),
                 expectedExpenditure.getDate(),
-                expectedExpenditure.getMember());
+                MemberInExpenseDTO.from(expectedExpenditure.getMember()));
     }
 }
