@@ -12,12 +12,18 @@ public class ComparisonStatisticsDTO {
     private ComparisonGroupData byGoalAmount;
     private ComparisonGroupData byAgeGroup;
 
+    private Long myMonthExpenseGoal;
+    private String ageGroup;
+
     public ComparisonStatisticsDTO(Long myTotalExpense, List<CategoryExpenseDTO> myTopCategories,
-                                   ComparisonGroupData byGoalAmount, ComparisonGroupData byAgeGroup) {
+                                   ComparisonGroupData byGoalAmount, ComparisonGroupData byAgeGroup,
+                                   Long myMonthExpenseGoal, String ageGroup) {
         this.myTotalExpense = myTotalExpense;
         this.myTopCategories = myTopCategories;
         this.byGoalAmount = byGoalAmount;
         this.byAgeGroup = byAgeGroup;
+        this.myMonthExpenseGoal = myMonthExpenseGoal;
+        this.ageGroup = ageGroup;
     }
 
 }

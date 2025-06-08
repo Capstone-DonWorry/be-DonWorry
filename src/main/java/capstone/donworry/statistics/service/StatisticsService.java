@@ -186,7 +186,7 @@ public class StatisticsService {
         }
 
 
-        return new ComparisonStatisticsDTO(myTotalExpense, myTopCategories, goalAmountComparison, ageGroupComparison);
+        return new ComparisonStatisticsDTO(myTotalExpense, myTopCategories, goalAmountComparison, ageGroupComparison, goalAmount, ageGroup);
 
 
     }
