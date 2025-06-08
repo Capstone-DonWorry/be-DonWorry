@@ -12,14 +12,15 @@ import java.util.List;
 
 public interface ExpenseStatisticsRepository extends JpaRepository<Expense, Long> {
 
-    @Query("SELECT FUNCTION('YEAR', e.expenseDate) AS year, FUNCTION('WEEK', e.expenseDate) AS week, SUM(e.amount) " +
+    @Query("SELECT FUNCTION('YEARWEEK', e.expenseDate, 1) AS yearWeek, SUM(e.amount) " +
             "FROM Expense e " +
             "WHERE e.member.id = :memberId AND e.expenseDate BETWEEN :startDate AND :endDate " +
-            "GROUP BY FUNCTION('YEAR', e.expenseDate), FUNCTION('WEEK', e.expenseDate) " +
-            "ORDER BY year DESC, week")
+            "GROUP BY FUNCTION('YEARWEEK', e.expenseDate, 1) " +
+            "ORDER BY yearWeek DESC")
     List<Object[]> findWeeklyExpense(@Param("memberId") Long memberId,
-                                      @Param("startDate") LocalDate startDate,
-                                      @Param("endDate") LocalDate endDate);
+                                     @Param("startDate") LocalDate startDate,
+                                     @Param("endDate") LocalDate endDate);
+
 
     @Query("SELECT e.expenseDate, SUM(e.amount) " +
             "FROM Expense e " +

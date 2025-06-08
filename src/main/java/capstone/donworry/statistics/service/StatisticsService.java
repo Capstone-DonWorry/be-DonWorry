@@ -39,9 +39,11 @@ public class StatisticsService {
 
         return result.stream()
                 .map(row -> {
-                    int year = (Integer) row[0];
-                    int week = (Integer) row[1];
-                    Long totalSpent = (Long) row[2];
+                    int yearWeek = ((Number) row[0]).intValue();
+                    Long totalSpent = ((Number) row[1]).longValue();
+
+                    int year = yearWeek / 100;       // 앞의 4자리
+                    int week = yearWeek % 100;
 
                     LocalDate weekStart = LocalDate
                             .now()
@@ -53,6 +55,9 @@ public class StatisticsService {
                     return new WeeklyExpenseDTO(
                             year, week, totalSpent, weekStart, weekEnd, dailyGoal);
                 })
+                .filter(ws ->
+                        !ws.getEndDate().isBefore(startDate) && !ws.getStartDate().isAfter(endDate)
+                )
                 .collect(Collectors.toList());
     }
 
