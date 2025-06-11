@@ -7,6 +7,7 @@ import capstone.donworry.member.domain.Member;
 import capstone.donworry.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
@@ -40,6 +42,8 @@ public class ExpenseService {
     public void deleteExpense(Long id, Long memberId) {
         Expense expense = expenseRepository.findByExpenseIdAndMemberId(id, memberId)
                         .orElseThrow(() -> new EntityNotFoundException("해당 ID의 데이터를 찾을 수 없습니다."));
+
+        log.info("지출 삭제 완료 : {}", expense.getExpenseId());
         expenseRepository.delete(expense);
     }
 

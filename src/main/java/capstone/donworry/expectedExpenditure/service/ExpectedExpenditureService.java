@@ -8,11 +8,13 @@ import capstone.donworry.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ExpectedExpenditureService {
 
     private  final ExpectedExpenditureRepository expectedExpenditureRepository;
@@ -52,6 +54,8 @@ public class ExpectedExpenditureService {
         ExpectedExpenditure expectedExpenditure = expectedExpenditureRepository
                 .findByMemberIdAndExpectedExpenditureId(memberId, expectedExpenditureId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID의 데이터를 찾을 수 없습니다."));
+
+        log.info("예상 지출 삭제 완료 : {}", expectedExpenditure.getExpectedExpenditureId());
         expectedExpenditureRepository.delete(expectedExpenditure);
     }
 }

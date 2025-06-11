@@ -80,11 +80,13 @@ public class CalendarService {
         //총지출+예상지출금액과 잔액 구하기;
         long totalExpenseAndExpectedExpense = totalExpense + totalExpectedExpense;
         long remaining = goalAmount - totalExpenseAndExpectedExpense;
+        if(remaining < 0) remaining = 0;
 
         //날짜별 지출 금액, 예상 지출 금액, 예상 목표 금액 구하기
         YearMonth yearMonth = YearMonth.of(year, month);
         int daysInMonth = yearMonth.lengthOfMonth();
-        Long dailyGoalTemp = goalAmount / daysInMonth;
+        Long dailyGoalTemp = (goalAmount - totalExpectedExpense)/ daysInMonth;
+        if(dailyGoalTemp < 0) dailyGoalTemp = 0L;
 
         Map<LocalDate, DailySummaryDto> dailySummaries = new LinkedHashMap<>();
 
