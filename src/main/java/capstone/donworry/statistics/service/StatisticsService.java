@@ -37,28 +37,44 @@ public class StatisticsService {
 
         List<Object[]> result = expenseStatisticsRepository.findWeeklyExpense(memberId, startDate, endDate);
 
-        return result.stream()
-                .map(row -> {
-                    int yearWeek = ((Number) row[0]).intValue();
-                    Long totalSpent = ((Number) row[1]).longValue();
+        Map<Integer, Long> expenseMap = result.stream()
+                .collect(Collectors.toMap(
+                        row -> ((Number) row[0]).intValue(),
+                        row -> ((Number) row[1]).longValue()
+                ));
 
-                    int year = yearWeek / 100;       // 앞의 4자리
-                    int week = yearWeek % 100;
+        // 해당 월의 첫 번째 주 ~ 마지막 주까지 루프
+        List<WeeklyExpenseDTO> weeklyList = new ArrayList<>();
+        LocalDate weekCursor = startDate.with(WeekFields.ISO.dayOfWeek(), 1); // 월의 첫 주 시작 (월요일)
 
-                    LocalDate weekStart = LocalDate
-                            .now()
-                            .withYear(year)
-                            .with(WeekFields.ISO.weekOfYear(), week)
-                            .with(WeekFields.ISO.dayOfWeek(), 1);
-                    LocalDate weekEnd = weekStart.plusDays(6);
+        while (!weekCursor.isAfter(endDate)) {
+            int year = weekCursor.getYear();
+            int week = weekCursor.get(WeekFields.ISO.weekOfYear());
+            int yearWeek = year * 100 + week;
 
-                    return new WeeklyExpenseDTO(
-                            year, week, totalSpent, weekStart, weekEnd, dailyGoal);
-                })
-                .filter(ws ->
-                        !ws.getEndDate().isBefore(startDate) && !ws.getStartDate().isAfter(endDate)
-                )
-                .collect(Collectors.toList());
+            LocalDate weekStart = weekCursor;
+            LocalDate weekEnd = weekStart.plusDays(6);
+
+            // 이 주가 월과 겹치면 포함
+            boolean isInTargetMonth = (weekStart.getMonthValue() == startDate.getMonthValue() ||
+                    weekEnd.getMonthValue() == startDate.getMonthValue());
+
+            if (isInTargetMonth) {
+                Long totalSpent = expenseMap.getOrDefault(yearWeek, 0L);
+
+                LocalDate clippedStart = weekStart.isBefore(startDate) ? startDate : weekStart;
+                LocalDate clippedEnd = weekEnd.isAfter(endDate) ? endDate : weekEnd;
+
+                weeklyList.add(new WeeklyExpenseDTO(
+                        year, week, totalSpent, clippedStart, clippedEnd, dailyGoal
+                ));
+            }
+
+            // 다음 주로 이동
+            weekCursor = weekCursor.plusWeeks(1);
+        }
+
+        return weeklyList;
     }
 
     // 주간 소비 세부사항
