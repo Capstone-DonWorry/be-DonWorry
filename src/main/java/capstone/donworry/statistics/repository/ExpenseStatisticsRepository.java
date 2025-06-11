@@ -16,7 +16,7 @@ public interface ExpenseStatisticsRepository extends JpaRepository<Expense, Long
             "FROM Expense e " +
             "WHERE e.member.id = :memberId AND e.expenseDate BETWEEN :startDate AND :endDate " +
             "GROUP BY FUNCTION('YEARWEEK', e.expenseDate, 1) " +
-            "ORDER BY yearWeek DESC")
+            "ORDER BY yearWeek")
     List<Object[]> findWeeklyExpense(@Param("memberId") Long memberId,
                                      @Param("startDate") LocalDate startDate,
                                      @Param("endDate") LocalDate endDate);
